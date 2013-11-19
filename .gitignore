@@ -4,3 +4,13 @@
 *.jar
 *.war
 *.ear
+
+# eclipse files #
+/.project
+/.classpath
+/.settings
+
+# gradle files #
+/.gradle
+/build/
+/bin
