@@ -27,6 +27,10 @@ public interface IProvider {
      */
     public static final String FIELD_DATA   = "data";
     /**
+     * JSON field name : key field name
+     */
+    public static final String FIELD_KEY    = "key";
+    /**
      * JSON field action: put
      */
     public static final String ACTION_PUT = "put";
