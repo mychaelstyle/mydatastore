@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
@@ -24,27 +23,23 @@ import com.amazonaws.services.dynamodbv2.model.DeleteRequest;
 import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 import com.amazonaws.services.dynamodbv2.model.PutRequest;
 import com.amazonaws.services.dynamodbv2.model.WriteRequest;
-import com.mychaelstyle.mydatastore.Provider;
 
 /**
  * Amazon Web Service DynamoDB datastore provider
  * @author Masanori Nakashima
  *
  */
-public class AWSDynamoDB extends Provider {
+public class AWSDynamoDB extends AWS {
 
     /**
      * configuration map key for DynamoDB end point
      */
     public static final String CONFIG_ENDPOINT   = "dynamodb_endpoint";
+
     /**
-     * configuration map key for Amazon Web Service Access Key
+     * dynamodbv2 client
      */
-    public static final String CONFIG_ACCESS_KEY = "aws_access_key";
-    /**
-     * configuration map key for Amazon Web Service Access Secret Key
-     */
-    public static final String CONFIG_SECRET_KEY = "aws_secret_key";
+    private AmazonDynamoDBClient client;
 
     /**
      * Constructor
@@ -131,16 +126,12 @@ public class AWSDynamoDB extends Provider {
     }
 
     /**
-     * dynamodbv2 client
-     */
-    private AmazonDynamoDBClient client;
-    /**
      * get DynamoDB client
      * @return AmazonDynamoDBClient
      */
     protected AmazonDynamoDBClient getClient(Map<String,String> config) throws Exception {
         if(null == client){
-            AWSCredentials credentials = AWSDynamoDB.getCredentials(config);
+            AWSCredentials credentials = AWS.getCredentials(config);
             client = new AmazonDynamoDBClient(credentials);
             // dynamodb.ap-northeast-1.amazonaws.com
             String endpoint = config.get(AWSDynamoDB.CONFIG_ENDPOINT);
@@ -148,18 +139,6 @@ public class AWSDynamoDB extends Provider {
             client.setEndpoint(endpoint);
         }
         return client;
-    }
-
-    /**
-     * get AWSCredentials instance for connection
-     * @return AWSCredentials
-     */
-    private static AWSCredentials getCredentials(Map<String,String> config) throws Exception {
-        String accessKey = config.get(AWSDynamoDB.CONFIG_ACCESS_KEY);
-        String secretKey = config.get(AWSDynamoDB.CONFIG_SECRET_KEY);
-        if(accessKey==null) throw new Exception("require " + AWSDynamoDB.CONFIG_ACCESS_KEY);
-        if(secretKey==null) throw new Exception("require " + AWSDynamoDB.CONFIG_SECRET_KEY);
-        return new BasicAWSCredentials(accessKey,secretKey);
     }
 
     /**
